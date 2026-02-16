@@ -17,6 +17,20 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.101
+    # Install libssl1.1 for .NET Core 3.1 compatibility
+    - name: Install libssl1.1
+      run: |
+        sudo apt-get update
+        wget http://security.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb
+        sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2_amd64.deb
         
     - name: Build
       run: dotnet build M2Mqtt.Core.sln --configuration Release
+
+    - name: Upload built DLLs
+      uses: actions/upload-artifact@v4
+      with:
+        name: m2mqtt-dlls
+        path: |
+          **/bin/Release/**/*.dll
+          **/bin/Release/**/*.pdb
